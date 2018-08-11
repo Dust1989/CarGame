@@ -139,6 +139,7 @@ void AKrazeKartsPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 
 void AKrazeKartsPawn::MoveForward(float Val)
 {
+	UE_LOG(LogTemp, Warning, TEXT("MoveForward....."));
 	GetVehicleMovementComponent()->SetThrottleInput(Val);
 }
 
