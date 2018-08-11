@@ -16,6 +16,8 @@
 #include "Materials/Material.h"
 #include "GameFramework/Controller.h"
 
+#include "Engine/Engine.h"
+
 // Needed for VR Headset
 #if HMD_MODULE_INCLUDED
 #include "IXRTrackingSystem.h"
@@ -139,6 +141,7 @@ void AKrazeKartsPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 
 void AKrazeKartsPawn::MoveForward(float Val)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Magenta, TEXT("Moving..."));
 	UE_LOG(LogTemp, Warning, TEXT("MoveForward....."));
 	GetVehicleMovementComponent()->SetThrottleInput(Val);
 }
