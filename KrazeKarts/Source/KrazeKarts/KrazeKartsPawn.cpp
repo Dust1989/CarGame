@@ -141,8 +141,6 @@ void AKrazeKartsPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 
 void AKrazeKartsPawn::MoveForward(float Val)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Magenta, TEXT("Moving..."));
-	UE_LOG(LogTemp, Warning, TEXT("MoveForward....."));
 	GetVehicleMovementComponent()->SetThrottleInput(Val);
 }
 
