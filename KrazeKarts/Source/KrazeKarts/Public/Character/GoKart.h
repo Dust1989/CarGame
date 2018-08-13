@@ -38,7 +38,9 @@ private:
 
 	void ApplyRotaion(float DeltaTime);
 
-	FVector GetResistance();
+	FVector GetAirResistance();
+
+	FVector GetRollingResistance();
 
 	UPROPERTY(EditAnywhere)
 	float Mass = 1000;
@@ -49,7 +51,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Dragcoefficient = 16;
 
-	float MaxRotateAngle = 90;
+	UPROPERTY(EditAnywhere)
+	float RollingResistanceCoefficient = 0.015;
+
+	UPROPERTY(EditAnywhere)
+	float MinTurningRadius = 10;
 
 	float SteeringtThrow;
 
@@ -58,6 +64,21 @@ private:
 	float Throttle;
 	
 	void MoveForward(float val);
+
 	void MoveRight(float val);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_MoveForward(float val);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_MoveRight(float val);
+
+	/*UPROPERTY(ReplicatedUsing = OnRep_ReplicatedTransform)
+	FTransform ReplicatedTransform;*/
+
+	UPROPERTY(Replicated)
+	FTransform ReplicatedTransform; 
+
+	/*UFUNCTION()
+	void OnRep_ReplicatedTransform();*/
 };
