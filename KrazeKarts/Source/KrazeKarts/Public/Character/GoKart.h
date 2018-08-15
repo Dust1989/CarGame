@@ -6,6 +6,42 @@
 #include "GameFramework/Pawn.h"
 #include "GoKart.generated.h"
 
+
+USTRUCT()
+struct FGoKartMove
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	float SteeringThrow;
+
+	UPROPERTY()
+	float Throttle;
+
+	UPROPERTY()
+	float DeltaTime;
+
+	UPROPERTY()
+	float Time;
+};
+
+USTRUCT()
+struct FGoKartState
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	FGoKartMove LastMove;
+
+	UPROPERTY()
+	FTransform Transform;
+
+	UPROPERTY()
+	FVector Velocity;
+	
+};
+
+
 UCLASS()
 class KRAZEKARTS_API AGoKart : public APawn
 {
@@ -34,9 +70,15 @@ public:
 	
 
 private:
+	FGoKartMove CreateMove(float DeltaTime);
+
+	void ClearAcknowledgetMoves(FGoKartMove LastMove);
+
+	void SimulateMove(const FGoKartMove& move);
+
 	void UpdateLocationFromVelocity(float DeltaTime);
 
-	void ApplyRotaion(float DeltaTime);
+	void ApplyRotaion(float DeltaTime, float SteeringThrow);
 
 	FVector GetAirResistance();
 
@@ -56,29 +98,27 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float MinTurningRadius = 10;
-
-	float SteeringtThrow;
-
-	FVector velocity;
-
-	float Throttle;
 	
 	void MoveForward(float val);
 
 	void MoveRight(float val);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_MoveForward(float val);
+	void Server_SendMove(FGoKartMove move);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_MoveRight(float val);
+	// The ServerState replicated with function --> OnRep_ServerState  
+	// frequency is 1 second set by "NetUpdateFrequency = 1" in the BeginPlay
+	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
+	FGoKartState ServerState;
 
-	/*UPROPERTY(ReplicatedUsing = OnRep_ReplicatedTransform)
-	FTransform ReplicatedTransform;*/
+	FVector Velocity;
 
-	UPROPERTY(Replicated)
-	FTransform ReplicatedTransform; 
+	UFUNCTION()
+	void OnRep_ServerState();
 
-	/*UFUNCTION()
-	void OnRep_ReplicatedTransform();*/
+
+	float SteeringThrow;
+	float Throttle;
+
+	TArray<FGoKartMove> UnacknowledgeeMoves;
 };
